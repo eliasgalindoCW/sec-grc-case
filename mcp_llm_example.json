@@ -1,0 +1,19 @@
+{
+  "context": {
+    "control_id": 1234,
+    "description": "Verificação de aprovadores de PRs no GitHub",
+    "evidence": [
+      {
+        "pr_number": 456,
+        "author": "user_a",
+        "approvers": ["user_a", "user_b"]
+      },
+      {
+        "pr_number": 457,
+        "author": "user_b",
+        "approvers": ["user_c"]
+      }
+    ]
+  },
+  "goal": "Validar se o controle de segregação de aprovações está sendo cumprido e sugerir melhorias se necessário"
+}
