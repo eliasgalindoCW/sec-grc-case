@@ -5,9 +5,47 @@ from typing import Dict, Tuple
 from requests.exceptions import RequestException
 from config import ERAMBA_API_URL, ERAMBA_TOKEN, ERAMBA_CONTROL_ID
 import os
+import json
+import urllib3
+
+# Disable SSL warnings when verify=False
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # SSL verification configuration
 VERIFY_SSL = os.getenv('VERIFY_SSL', 'true').lower() == 'true'
+
+def get_eramba_session() -> requests.Session:
+    """
+    Initialize a session with Eramba and handle authentication.
+    """
+    try:
+        session = requests.Session()
+        
+        # Configure session
+        session.verify = VERIFY_SSL
+        session.headers.update({
+            'Content-Type': 'application/json',
+            'Authorization': f'Token {ERAMBA_TOKEN}'
+        })
+        
+        print(f"\nTesting connection to Eramba at: {ERAMBA_API_URL}")
+        
+        # Test connection
+        response = session.get(
+            f"{ERAMBA_API_URL}/api/users/me",
+            verify=VERIFY_SSL
+        )
+        
+        if response.status_code == 200:
+            print("Successfully connected to Eramba")
+            return session
+        else:
+            print(f"Connection test failed with status code: {response.status_code}")
+            print(f"Response: {response.text}")
+            raise Exception("Failed to connect to Eramba")
+            
+    except Exception as e:
+        raise Exception(f"Error connecting to Eramba: {str(e)}")
 
 def send_evidence(control_id: int, result: str, description: str) -> Tuple[int, str]:
     """
@@ -22,7 +60,10 @@ def send_evidence(control_id: int, result: str, description: str) -> Tuple[int, 
         Tuple of (status_code, response_text)
     """
     try:
-        headers = {'Authorization': f'Token {ERAMBA_TOKEN}'}
+        # Get authenticated session
+        session = get_eramba_session()
+        
+        # Prepare payload
         payload = {
             'control_id': control_id,
             'date': datetime.utcnow().isoformat(),
@@ -31,14 +72,16 @@ def send_evidence(control_id: int, result: str, description: str) -> Tuple[int, 
         }
         
         print(f"\nSending evidence to Eramba:")
-        print(f"URL: {ERAMBA_API_URL}")
+        print(f"URL: {ERAMBA_API_URL}/api/evidences")
         print(f"Control ID: {control_id}")
         print(f"SSL Verification: {'Enabled' if VERIFY_SSL else 'Disabled'}")
+        print(f"Payload: {json.dumps(payload, indent=2)}")
         
-        resp = requests.post(ERAMBA_API_URL, 
-                           headers=headers, 
-                           json=payload, 
-                           verify=VERIFY_SSL)
+        # Send request using the session
+        resp = session.post(
+            f"{ERAMBA_API_URL}/api/evidences",
+            json=payload
+        )
         
         print(f"Response status code: {resp.status_code}")
         if resp.status_code != 200:
