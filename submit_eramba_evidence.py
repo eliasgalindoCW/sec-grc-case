@@ -1,14 +1,13 @@
 # submit_eramba_evidence.py
-import os
 import requests
 from datetime import datetime
 from typing import Dict, Tuple
 from requests.exceptions import RequestException
+from config import ERAMBA_API_URL, ERAMBA_TOKEN, ERAMBA_CONTROL_ID
+import os
 
-# Get configuration from environment variables
-ERAMBA_API_URL = os.getenv('ERAMBA_API_URL')
-ERAMBA_TOKEN = os.getenv('ERAMBA_TOKEN')
-
+# SSL verification configuration
+VERIFY_SSL = os.getenv('VERIFY_SSL', 'true').lower() == 'true'
 
 def send_evidence(control_id: int, result: str, description: str) -> Tuple[int, str]:
     """
@@ -23,11 +22,6 @@ def send_evidence(control_id: int, result: str, description: str) -> Tuple[int, 
         Tuple of (status_code, response_text)
     """
     try:
-        if not ERAMBA_TOKEN:
-            raise ValueError("ERAMBA_TOKEN environment variable is not set")
-        if not ERAMBA_API_URL:
-            raise ValueError("ERAMBA_API_URL environment variable is not set")
-
         headers = {'Authorization': f'Token {ERAMBA_TOKEN}'}
         payload = {
             'control_id': control_id,
@@ -36,11 +30,30 @@ def send_evidence(control_id: int, result: str, description: str) -> Tuple[int, 
             'description': description
         }
         
-        resp = requests.post(ERAMBA_API_URL, headers=headers, json=payload)
+        print(f"\nSending evidence to Eramba:")
+        print(f"URL: {ERAMBA_API_URL}")
+        print(f"Control ID: {control_id}")
+        print(f"SSL Verification: {'Enabled' if VERIFY_SSL else 'Disabled'}")
+        
+        resp = requests.post(ERAMBA_API_URL, 
+                           headers=headers, 
+                           json=payload, 
+                           verify=VERIFY_SSL)
+        
+        print(f"Response status code: {resp.status_code}")
+        if resp.status_code != 200:
+            print(f"Error response: {resp.text}")
+            
         resp.raise_for_status()
         return resp.status_code, resp.text
         
     except RequestException as e:
+        print(f"\nDetailed error information:")
+        print(f"Error type: {type(e).__name__}")
+        print(f"Error message: {str(e)}")
+        if hasattr(e, 'response') and e.response is not None:
+            print(f"Response status code: {e.response.status_code}")
+            print(f"Response body: {e.response.text}")
         raise Exception(f"Error sending evidence to Eramba: {str(e)}")
 
 
@@ -66,9 +79,8 @@ Non-compliant PRs:
         """.strip()
         
         # Submit evidence to Eramba
-        # Note: Replace 123 with your actual control ID in Eramba
         status_code, response = send_evidence(
-            control_id=123,  # Replace with actual control ID
+            control_id=ERAMBA_CONTROL_ID,
             result='pass' if len(github_results['non_compliant_prs']) == 0 else 'fail',
             description=description
         )
