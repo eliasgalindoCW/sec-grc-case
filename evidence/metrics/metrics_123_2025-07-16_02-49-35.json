@@ -1,0 +1,16 @@
+{
+  "control_id": 123,
+  "timestamp": "2025-07-16T02:49:35.626896",
+  "metrics": {
+    "compliance_rate": 0.0,
+    "total_prs": 1,
+    "high_risk_prs": 0,
+    "risk_distribution": {
+      "low": 1,
+      "medium": 0,
+      "high": 0,
+      "critical": 0
+    },
+    "statistical_metrics": {}
+  }
+}
