@@ -1,0 +1,101 @@
+{
+  "timestamp": "2025-07-16T03:16:15.000223",
+  "analysis_parameters": {
+    "control_id": null,
+    "days_analyzed": 30,
+    "model": "claude-3-opus-20240229"
+  },
+  "evidence_context": {
+    "evidence_summary": {
+      "total_records": 2,
+      "date_range": {
+        "start": "2025-06-16T03:16:15.000262",
+        "end": "2025-07-16T03:16:15.000262"
+      },
+      "compliance_trend": {
+        "direction": "stable",
+        "change": 0.0,
+        "current_rate": 0.0,
+        "historical_rates": [
+          {
+            "date": "2025-07-16T02:49:35.626896",
+            "rate": 0.0
+          },
+          {
+            "date": "2025-07-16T03:15:24.975599",
+            "rate": 0.0
+          }
+        ]
+      },
+      "latest_status": "fail"
+    },
+    "review_patterns": {
+      "patterns": {
+        "reviewer_distribution": {},
+        "review_times": [],
+        "common_issues": []
+      },
+      "concerns": []
+    },
+    "risk_analysis": {
+      "patterns": {
+        "risk_distribution": {
+          "low": [
+            {
+              "date": "2025-07-16T03:15:24.975599",
+              "count": 2
+            },
+            {
+              "date": "2025-07-16T02:49:35.626896",
+              "count": 1
+            }
+          ],
+          "medium": [
+            {
+              "date": "2025-07-16T03:15:24.975599",
+              "count": 0
+            },
+            {
+              "date": "2025-07-16T02:49:35.626896",
+              "count": 0
+            }
+          ],
+          "high": [
+            {
+              "date": "2025-07-16T03:15:24.975599",
+              "count": 0
+            },
+            {
+              "date": "2025-07-16T02:49:35.626896",
+              "count": 0
+            }
+          ],
+          "critical": [
+            {
+              "date": "2025-07-16T03:15:24.975599",
+              "count": 0
+            },
+            {
+              "date": "2025-07-16T02:49:35.626896",
+              "count": 0
+            }
+          ]
+        },
+        "high_risk_trend": [
+          {
+            "date": "2025-07-16T03:15:24.975599",
+            "count": 0
+          },
+          {
+            "date": "2025-07-16T02:49:35.626896",
+            "count": 0
+          }
+        ],
+        "risk_factors": []
+      },
+      "concerns": []
+    },
+    "improvement_opportunities": []
+  },
+  "analysis": "Based on the limited evidence provided, here is my analysis and recommendations:\n\nCritical Issues\n- No critical issues identified based on the evidence summary. The current status is \"fail\" but no specific high-risk concerns are listed.\n\nProcess Insights\n- With only 2 total records over a 1 month period, the sample size is too small to identify meaningful patterns or trends. More data is needed.\n- The compliance trend is stable with 0% change, but it's unclear if stable at an acceptable level or if improvements are still required.\n- No specific review pattern concerns or risk concerns were provided, making it difficult to assess the effectiveness of the current process.\n\nRecommended Actions\n1. Gather more PR review data over a longer time period (e.g. 3-6 months) to have a representative sample size for analysis. \n2. Define clear criteria for what constitutes a \"pass\" vs \"fail\" status for PR reviews. Determine target pass rate.\n3. Implement a checklist of risk factors and best practices for reviewers to assess each PR against. Use this to identify common risk concerns.\n4. Analyze the review patterns of top reviewers whose PRs have low risk issues. Document their best practices and share with the team.\n5. Set up automated code scanning in the PR pipeline to flag common security, performance and maintainability issues before merging.\n\nMetrics & Targets\n- Increase PR review data collection to 100% of PRs over the next 3 months\n- Define a target PR pass rate (e.g. 95%) and track progress monthly \n- Aim for <5% of PRs having high-risk security or maintainability issues identified\n- 100% of reviewers to use new PR review checklist and risk criteria within 1 month\n- Achieve 80% automated PR code scanning coverage within 2 months\n\nThe key is to gather more specific data on the current process, define objective pass/fail criteria, implement reviewer best practices, and add automated quality checks. Tracking metrics will help measure progress and keep the team accountable."
+}
