@@ -55,13 +55,13 @@ class MCPEvidenceAnalyzer:
             end_date=end_date
         )
         
+        # Get latest evidence
+        latest_evidence = evidence_list[-1] if evidence_list else None
+        
         # Calculate trends
         compliance_trend = self._analyze_compliance_trend(evidence_list)
         review_patterns = self._analyze_review_patterns(evidence_list)
         risk_patterns = self._analyze_risk_patterns(evidence_list)
-        
-        # Prepare evidence summary
-        latest_evidence = evidence_list[-1] if evidence_list else None
         
         return {
             'evidence_summary': {
@@ -109,32 +109,29 @@ class MCPEvidenceAnalyzer:
     
     def _analyze_review_patterns(self, evidence_list: List[Dict]) -> Dict:
         """Analyze review patterns from evidence history."""
-        patterns = {}
-        for evidence in evidence_list:
-            metrics = evidence.get('metrics', {})
-            for reviewer, count in metrics.get('review_patterns', {}).items():
-                patterns[reviewer] = patterns.get(reviewer, 0) + count
-        return patterns
+        if not evidence_list:
+            return {}
+            
+        # Use only the latest evidence for review patterns
+        latest_evidence = evidence_list[-1]
+        return latest_evidence.get('metrics', {}).get('review_patterns', {})
     
     def _analyze_risk_patterns(self, evidence_list: List[Dict]) -> Dict:
         """Analyze risk patterns from evidence history."""
-        patterns = {
-            'high_risk_trend': [],
-            'risk_distribution': {}
-        }
+        if not evidence_list:
+            return {'high_risk_trend': [], 'risk_distribution': {}}
+            
+        # Use only the latest evidence for risk distribution
+        latest_evidence = evidence_list[-1]
+        latest_metrics = latest_evidence.get('metrics', {})
         
-        for evidence in evidence_list:
-            metrics = evidence.get('metrics', {})
-            # Track high risk PRs
-            patterns['high_risk_trend'].append(
-                metrics.get('high_risk_prs', 0)
-            )
-            # Aggregate risk distribution
-            for risk, count in metrics.get('risk_distribution', {}).items():
-                patterns['risk_distribution'][risk] = \
-                    patterns['risk_distribution'].get(risk, 0) + count
-                    
-        return patterns
+        return {
+            'high_risk_trend': [
+                e.get('metrics', {}).get('high_risk_prs', 0)
+                for e in evidence_list
+            ],
+            'risk_distribution': latest_metrics.get('risk_distribution', {})
+        }
     
     def generate_mcp_prompt(self, control_id: Optional[int] = None, days: int = 30) -> str:
         """Generate MCP prompt from evidence context."""

@@ -70,7 +70,7 @@ class LLMAnalyzer:
         
         # Create output directory
         self.output_dir.mkdir(exist_ok=True)
-    
+        
     def _get_system_prompt(self) -> str:
         """Get system prompt for the analysis."""
         return """You are an expert security and compliance analyst specializing in code review processes.
@@ -88,8 +88,14 @@ Format your response in clear sections:
 - Recommended Actions
 - Metrics & Targets
 
-Be specific and practical in your recommendations. Use markdown formatting for better readability."""
-    
+Be specific and practical in your recommendations. Use markdown formatting for better readability.
+
+Important:
+- Each PR should be counted only once in the analysis
+- Pay attention to the timestamps to avoid duplicate counting
+- Focus on the most recent evidence when there are multiple entries
+"""
+        
     def analyze_evidence(
         self,
         control_id: Optional[int] = None,
@@ -107,8 +113,39 @@ Be specific and practical in your recommendations. Use markdown formatting for b
         Returns:
             Dictionary with analysis results
         """
-        # Get MCP prompt
-        evidence_prompt = self.evidence_analyzer.generate_mcp_prompt(control_id, days)
+        # Get evidence context
+        evidence_context = self.evidence_analyzer.get_evidence_context(control_id, days)
+        
+        # Prepare evidence summary
+        latest_evidence = evidence_context.get('evidence_summary', {})
+        review_patterns = evidence_context.get('review_patterns', {})
+        risk_patterns = evidence_context.get('risk_patterns', {})
+        
+        # Format evidence prompt
+        evidence_prompt = f"""
+Please analyze the following PR review control evidence:
+
+Evidence Summary:
+- Period: {latest_evidence.get('date_range', {}).get('start')} to {latest_evidence.get('date_range', {}).get('end')}
+- Total Records: {latest_evidence.get('total_records', 0)}
+- Current Status: {latest_evidence.get('latest_status', 'unknown')}
+- Compliance Trend: {latest_evidence.get('compliance_trend', {}).get('direction', 'unknown')}
+
+Review Patterns:
+{chr(10).join([f"- {reviewer}: {count} reviews" for reviewer, count in review_patterns.items()])}
+
+Risk Distribution:
+{chr(10).join([f"- {risk}: {count} PRs" for risk, count in risk_patterns.get('risk_distribution', {}).items()])}
+
+High Risk PR Trend:
+{', '.join(map(str, risk_patterns.get('high_risk_trend', [])))}
+
+Please provide:
+1. Critical issues that need immediate attention
+2. Process improvement recommendations
+3. Specific metrics and targets to track
+4. Actionable next steps
+"""
         
         try:
             # Prepare request payload
@@ -153,7 +190,7 @@ Be specific and practical in your recommendations. Use markdown formatting for b
                     'days_analyzed': days,
                     'model': self.model
                 },
-                'evidence_context': self.evidence_analyzer.get_evidence_context(control_id, days),
+                'evidence_context': evidence_context,
                 'analysis': analysis
             }
             
@@ -172,7 +209,7 @@ Be specific and practical in your recommendations. Use markdown formatting for b
         except Exception as e:
             logger.error(f"Error during analysis: {str(e)}")
             raise
-    
+            
     def _save_analysis(self, result: Dict) -> str:
         """Save analysis results to file."""
         timestamp = datetime.utcnow().strftime("%Y-%m-%d_%H-%M-%S")
