@@ -22,8 +22,10 @@ import ssl
 import certifi
 from urllib3.exceptions import InsecureRequestWarning
 
+from src.utils.logging_config import setup_logging
+
 # Configure logging
-logging.basicConfig(level=logging.INFO)
+setup_logging()
 logger = logging.getLogger(__name__)
 
 # Configure SSL context for self-signed certificates
@@ -40,13 +42,13 @@ def create_ssl_context(verify_ssl: bool = True) -> Optional[ssl.SSLContext]:
         return ctx
 
 class ErambaEnvironment(Enum):
-    """Available Eramba environments."""
+    """Environment types for Eramba deployment."""
     LOCAL = "local"
     STAGING = "staging"
     PRODUCTION = "production"
 
 class ErambaControlStatus(Enum):
-    """Possible control status values in Eramba."""
+    """Possible control status values."""
     PASS = "pass"
     FAIL = "fail"
     PARTIAL = "partial"

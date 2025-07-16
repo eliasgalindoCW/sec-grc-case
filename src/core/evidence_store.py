@@ -1,8 +1,12 @@
 """
 Evidence Store Module
 
-Since Eramba Community doesn't provide a public API, this module stores evidence
-locally in a format that can be manually imported into Eramba later.
+This module provides a local storage system for control evidence and metrics.
+It handles:
+- Storing control evidence in JSON format
+- Managing metrics data
+- Generating reports
+- Maintaining evidence history
 """
 
 import json
@@ -12,8 +16,11 @@ from typing import Dict, List, Optional
 import logging
 from pathlib import Path
 
+from src.utils.logging_config import setup_logging
+from src.utils.config import load_config
+
 # Configure logging
-logging.basicConfig(level=logging.INFO)
+setup_logging()
 logger = logging.getLogger(__name__)
 
 class EvidenceStore:
@@ -21,14 +28,15 @@ class EvidenceStore:
     Stores control evidence locally in a structured format.
     """
     
-    def __init__(self, storage_dir: str = "evidence"):
+    def __init__(self, storage_dir: str = None):
         """
         Initialize evidence store.
         
         Args:
-            storage_dir: Directory to store evidence files
+            storage_dir: Directory to store evidence files (defaults to config path)
         """
-        self.storage_dir = Path(storage_dir)
+        config = load_config()
+        self.storage_dir = Path(storage_dir or str(config.evidence_dir))
         self.storage_dir.mkdir(parents=True, exist_ok=True)
         
         # Create subdirectories

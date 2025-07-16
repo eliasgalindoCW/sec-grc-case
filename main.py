@@ -2,31 +2,30 @@
 
 import sys
 from typing import Optional, Dict
-from datetime import datetime
 import logging
 from pathlib import Path
 
-from pr_analyzer import PullRequestAnalyzer
-from evidence_store import EvidenceStore
-from config import (
-    GITHUB_TOKEN,
-    GITHUB_REPO,
-    ERAMBA_CONTROL_ID
-)
-from analyze_with_llm import LLMAnalyzer
+from src.analyzers.pr_analyzer import PullRequestAnalyzer
+from src.analyzers.analyze_with_llm import LLMAnalyzer
+from src.core.evidence_store import EvidenceStore
+from src.utils.config import load_config
+from src.utils.logging_config import setup_logging
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
+# Setup logging
+setup_logging()
 logger = logging.getLogger(__name__)
+
+# Load configuration
+config = load_config()
 
 def analyze_github_controls(days: int = 30) -> Dict:
     """
     Analyze GitHub PR controls using the new analyzer.
     """
-    analyzer = PullRequestAnalyzer(GITHUB_TOKEN, GITHUB_REPO)
+    analyzer = PullRequestAnalyzer(
+        config.github_token,
+        config.github_repo
+    )
     return analyzer.analyze_compliance(days)
 
 def store_evidence(analysis_result: Dict) -> Dict:
@@ -69,7 +68,7 @@ Non-compliant Pull Requests:
     
     # Store evidence
     return store.store_evidence(
-        control_id=ERAMBA_CONTROL_ID,
+        control_id=config.eramba_control_id,
         status=status,
         description=description,
         metrics={
@@ -98,7 +97,8 @@ def main(action: Optional[str] = None) -> None:
                'check' for GitHub controls check
                'submit' for evidence storage
                'report' for generating evidence report
-               None to run both check and submit
+               'analyze' for LLM analysis
+               None to run all actions
     """
     try:
         analysis_result = None
@@ -141,8 +141,9 @@ if __name__ == "__main__":
     # Parse command line arguments
     action = sys.argv[1] if len(sys.argv) > 1 else None
     
-    if action and action.lower() not in ['check', 'submit', 'report']:
-        logger.error("Invalid action. Use 'check' for controls, 'submit' for evidence, or 'report' for report generation.")
+    valid_actions = ['check', 'submit', 'report', 'analyze']
+    if action and action.lower() not in valid_actions:
+        logger.error(f"Invalid action. Use one of: {', '.join(valid_actions)}")
         sys.exit(1)
         
     main(action)

@@ -3,7 +3,7 @@ import requests
 from datetime import datetime
 from typing import Dict, Tuple
 from requests.exceptions import RequestException
-from config import ERAMBA_API_URL, ERAMBA_TOKEN, ERAMBA_CONTROL_ID
+from src.utils.config import ERAMBA_API_URL, ERAMBA_TOKEN, ERAMBA_CONTROL_ID
 import os
 import json
 import urllib3
@@ -107,7 +107,7 @@ def submit_evidence() -> Dict[str, any]:
     """
     try:
         # Get GitHub control results
-        from check_github_control import check_github_controls
+        from src.core.check_github_control import check_github_controls
         github_results = check_github_controls()
         
         # Prepare evidence description
