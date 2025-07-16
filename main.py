@@ -13,6 +13,7 @@ from config import (
     GITHUB_REPO,
     ERAMBA_CONTROL_ID
 )
+from analyze_with_llm import LLMAnalyzer
 
 # Configure logging
 logging.basicConfig(
@@ -80,6 +81,13 @@ Non-compliant Pull Requests:
         }
     )
 
+def analyze_with_llm():
+    """
+    Analyze evidence with LLM.
+    """
+    analyzer = LLMAnalyzer()
+    analyzer.analyze_evidence()
+
 def main(action: Optional[str] = None) -> None:
     """
     Main function to orchestrate the execution of GitHub control checks
@@ -115,6 +123,10 @@ def main(action: Optional[str] = None) -> None:
             logger.info("\nGenerating evidence report...")
             report_path = store.generate_report()
             logger.info(f"Report generated: {report_path}")
+
+        if action is None or action.lower() == 'analyze':
+            logger.info("\nAnalyzing evidence with LLM...")
+            analyze_with_llm()
             
     except Exception as e:
         logger.error(f"\nError during execution: {str(e)}")
