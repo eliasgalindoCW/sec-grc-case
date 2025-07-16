@@ -12,8 +12,9 @@ from datetime import datetime
 import json
 from pathlib import Path
 import requests
-from mcp_evidence_analyzer import MCPEvidenceAnalyzer
+from src.analyzers.mcp_evidence_analyzer import MCPEvidenceAnalyzer
 from dotenv import load_dotenv
+from src.utils.config import load_config
 
 # Load environment variables
 load_dotenv()
@@ -32,7 +33,7 @@ class LLMAnalyzer:
     
     def __init__(
         self,
-        evidence_dir: str = "evidence",
+        evidence_dir: str = None,
         model: str = "claude-3-opus-20240229",
         temperature: float = 0.7,
         max_tokens: int = 4096
@@ -41,15 +42,19 @@ class LLMAnalyzer:
         Initialize LLM analyzer.
         
         Args:
-            evidence_dir: Directory containing evidence
+            evidence_dir: Directory containing evidence (defaults to config path)
             model: Anthropic model to use
             temperature: Model temperature (0.0 to 1.0)
             max_tokens: Maximum tokens in response
         """
-        self.evidence_analyzer = MCPEvidenceAnalyzer(evidence_dir)
+        config = load_config()
+        self.evidence_analyzer = MCPEvidenceAnalyzer(
+            evidence_dir or str(config.evidence_dir)
+        )
         self.model = model
         self.temperature = temperature
         self.max_tokens = max_tokens
+        self.output_dir = config.output_dir
         
         # Get API key from environment
         self.api_key = os.getenv('ANTHROPIC_API_KEY')
@@ -64,7 +69,6 @@ class LLMAnalyzer:
         }
         
         # Create output directory
-        self.output_dir = Path("analysis_output")
         self.output_dir.mkdir(exist_ok=True)
     
     def _get_system_prompt(self) -> str:

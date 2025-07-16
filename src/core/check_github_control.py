@@ -3,7 +3,7 @@ import requests
 import json
 from typing import List, Dict, Set
 from requests.exceptions import RequestException
-from config import GITHUB_TOKEN, GITHUB_REPO
+from src.utils.config import GITHUB_TOKEN, GITHUB_REPO
 from datetime import datetime, timedelta
 
 # Setup headers with token
