@@ -1,6 +1,13 @@
-certifi==2025.7.14
-charset-normalizer==3.4.2
-idna==3.10
-python-dotenv==1.1.1
-requests==2.32.4
-urllib3==2.5.0
+# Core dependencies
+requests>=2.31.0
+python-dotenv>=1.0.0
+
+# Testing
+pytest>=7.4.0
+pytest-cov>=4.1.0
+pytest-mock>=3.11.1
+
+# Development
+black>=23.3.0
+flake8>=6.0.0
+mypy>=1.3.0
