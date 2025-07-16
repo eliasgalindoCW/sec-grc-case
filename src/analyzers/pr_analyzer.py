@@ -97,6 +97,18 @@ class PullRequestAnalyzer:
         # Calculate metrics
         total_prs = len(merged_prs)
         compliance_rate = (len(compliant_prs) / total_prs * 100) if total_prs > 0 else 0
+        high_risk_count = risk_distribution['high'] + risk_distribution['critical']
+        
+        # Determine overall status
+        status = 'pass'
+        if compliance_rate < 95:  # Lower 95% compliance: fail
+            status = 'fail'
+            logger.info("Status: FAIL - Compliance rate below 95%")
+        elif high_risk_count > total_prs * 0.1:  # More than 10% of PRs with high risk is fail
+            status = 'fail'
+            logger.info("Status: FAIL - Too many high-risk PRs")
+        else:
+            logger.info("Status: PASS - Compliance criteria met")
         
         # Prepare results
         results = {
@@ -110,8 +122,9 @@ class PullRequestAnalyzer:
                 'compliance_rate': compliance_rate,
                 'compliant_prs': len(compliant_prs),
                 'non_compliant_prs': len(non_compliant_prs),
-                'high_risk_prs': risk_distribution['high'] + risk_distribution['critical'],
-                'risk_distribution': risk_distribution
+                'high_risk_prs': high_risk_count,
+                'risk_distribution': risk_distribution,
+                'status': status
             },
             'review_patterns': review_patterns,
             'non_compliant_details': non_compliant_prs,

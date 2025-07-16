@@ -1,14 +1,32 @@
-# PR Review Control Analyzer
+# Security GRC - PR Review Control Analyzer
 
-This tool analyzes GitHub Pull Request review controls and provides compliance evidence and insights using LLMs.
+This tool analyzes GitHub Pull Request review controls and provides compliance evidence and insights using LLMs. It's designed to help security and compliance teams automate the verification of PR review controls and maintain evidence for audits.
 
 ## Features
 
-- GitHub PR review control verification
-- Evidence collection and storage
-- LLM-powered analysis using Claude
-- Compliance reporting
-- Structured data for future analysis
+### PR Review Control Verification
+- Automated analysis of PR review compliance
+- Risk assessment based on multiple factors:
+  - Code complexity analysis
+  - Sensitive pattern detection
+  - File type risk evaluation
+  - Review pattern analysis
+- Configurable compliance thresholds
+- Statistical metrics and trend analysis
+
+### Evidence Management
+- Structured evidence storage
+- Automatic evidence collection
+- Historical tracking
+- Evidence report generation
+- Metrics aggregation
+
+### LLM-Powered Analysis
+- Intelligent analysis using Claude
+- Context-aware recommendations
+- Pattern recognition
+- Actionable insights
+- MCP (Model Context Protocol) integration
 
 ## Project Structure
 
@@ -18,6 +36,7 @@ security-grc-case/
 │   ├── analyzers/           # Analysis modules
 │   │   ├── pr_analyzer.py   # GitHub PR analysis
 │   │   ├── llm_analyzer.py  # LLM integration
+│   │   ├── code_analyzer.py # Code complexity analysis
 │   │   └── mcp_analyzer.py  # MCP integration
 │   ├── clients/             # External service clients
 │   │   └── eramba_client.py # Eramba API client
@@ -31,6 +50,7 @@ security-grc-case/
 │   │   └── analysis_output/ # Analysis results
 │   └── utils/               # Utility modules
 │       ├── config.py        # Configuration management
+│       ├── cache.py         # Caching functionality
 │       └── logging_config.py # Logging setup
 ├── tests/                   # Test suite
 │   └── test_analyzers/      # Analyzer tests
@@ -64,6 +84,12 @@ ERAMBA_CONTROL_ID=123
 
 # SSL Configuration
 VERIFY_SSL=false  # Set to true in production
+
+# Logging
+LOG_LEVEL=INFO  # DEBUG, INFO, WARNING, ERROR
+
+# LLM Configuration
+ANTHROPIC_API_KEY=your_anthropic_key_here
 ```
 
 ## Usage
@@ -86,27 +112,79 @@ python main.py analyze
 python main.py
 ```
 
+## Compliance Criteria
+
+The tool evaluates PR compliance based on several criteria:
+
+### Review Requirements
+- PRs must be approved by someone other than the author
+- Reviews must be thorough and documented
+- High-risk changes require additional scrutiny
+
+### Risk Assessment
+PRs are classified into risk levels based on:
+- Code complexity (lines changed, nesting depth, etc.)
+- Sensitive patterns (auth, security, etc.)
+- File types (config, infrastructure, etc.)
+- Review patterns (timing, thoroughness)
+
+### Compliance Thresholds
+- Overall compliance rate must be ≥ 95%
+- High-risk PRs must be < 10% of total
+- Critical changes require specific approvals
+
 ## Evidence Structure
 
-Evidence is stored in JSON format with:
+Evidence is stored in a structured format with:
+
+### Control Evidence
 - Control metadata
-- Compliance metrics
+- Compliance status
+- Timestamps
+- Description
+
+### Metrics
+- Compliance rates
+- Risk distribution
 - Review patterns
-- Risk analysis
-- Non-compliant PRs
+- Statistical metrics
 
-Reports are generated in Markdown format for easy reading.
+### Reports
+- Generated in Markdown format
+- Include summary statistics
+- List non-compliant PRs
+- Show risk analysis
 
-## LLM Analysis
+## Cache Management
 
-The tool uses Claude to analyze:
-- Compliance trends
-- Review patterns
-- Risk factors
-- Process improvements
+The tool implements caching to optimize performance:
 
-Analysis results include:
-- Critical issues
-- Process insights
-- Recommended actions
-- Metrics & targets
+- API response caching
+- Analysis result caching
+- Configurable TTL
+- Automatic invalidation
+
+## Testing
+
+Run the test suite:
+```bash
+pytest tests/
+```
+
+Tests cover:
+- PR analysis logic
+- Evidence storage
+- LLM integration
+- Cache functionality
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Run tests
+5. Submit a pull request
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.

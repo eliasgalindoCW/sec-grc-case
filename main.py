@@ -1,4 +1,8 @@
-#!/usr/bin/env python3
+"""
+Main Application Module
+
+This module provides the entry point for the PR review control analyzer.
+"""
 
 import sys
 from typing import Optional, Dict
@@ -63,21 +67,11 @@ Non-compliant Pull Requests:
 ])}
     """.strip()
     
-    # Determine control status
-    status = 'pass' if analysis_result['summary']['compliance_rate'] >= 95 else 'fail'
-    
     # Store evidence
     return store.store_evidence(
         control_id=config.eramba_control_id,
-        status=status,
         description=description,
-        metrics={
-            'compliance_rate': analysis_result['summary']['compliance_rate'],
-            'total_prs': analysis_result['summary']['total_prs'],
-            'high_risk_prs': analysis_result['summary']['high_risk_prs'],
-            'risk_distribution': analysis_result['summary']['risk_distribution'],
-            'statistical_metrics': analysis_result.get('statistical_metrics', {})
-        }
+        metrics=analysis_result
     )
 
 def analyze_with_llm():
