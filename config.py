@@ -10,11 +10,13 @@ GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
 GITHUB_REPO = os.getenv('GITHUB_REPO', 'eliasgalindoCW/sec-grc-case')
 
 # Eramba configuration
-ERAMBA_API_URL = os.getenv('ERAMBA_API_URL', 'https://localhost:8443')  # Base URL for Docker container
+ERAMBA_BASE_URL = os.getenv('ERAMBA_BASE_URL', 'https://localhost:8443')
+ERAMBA_API_URL = f"{ERAMBA_BASE_URL}/api/v1"  # Eramba 3.26.4 API endpoint
 ERAMBA_TOKEN = os.getenv('ERAMBA_TOKEN')
-
-# Control configuration
 ERAMBA_CONTROL_ID = int(os.getenv('ERAMBA_CONTROL_ID', '123'))
+
+# SSL Configuration
+VERIFY_SSL = os.getenv('VERIFY_SSL', 'false').lower() == 'true'
 
 # Validate required configuration
 if not GITHUB_TOKEN:
