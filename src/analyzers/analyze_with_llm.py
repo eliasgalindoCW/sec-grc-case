@@ -9,6 +9,7 @@ import os
 from typing import Dict, Optional
 import logging
 from datetime import datetime
+import datetime as dt
 import json
 from pathlib import Path
 import requests
@@ -184,7 +185,7 @@ Please provide:
             
             # Prepare result
             result = {
-                'timestamp': datetime.now(datetime.UTC).isoformat(),
+                'timestamp': datetime.now(dt.UTC).isoformat(),
                 'analysis_parameters': {
                     'control_id': control_id,
                     'days_analyzed': days,
@@ -212,7 +213,7 @@ Please provide:
             
     def _save_analysis(self, result: Dict) -> str:
         """Save analysis results to file."""
-        timestamp = datetime.now(datetime.UTC).strftime("%Y-%m-%d_%H-%M-%S")
+        timestamp = datetime.now(dt.UTC).strftime("%Y-%m-%d_%H-%M-%S")
         control_id = result['analysis_parameters']['control_id'] or 'all'
         
         # Save JSON

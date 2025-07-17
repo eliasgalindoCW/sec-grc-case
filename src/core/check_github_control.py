@@ -5,13 +5,14 @@ from typing import List, Dict, Set
 from requests.exceptions import RequestException
 from src.utils.config import GITHUB_TOKEN, GITHUB_REPO
 from datetime import datetime, timedelta
+import datetime as dt
 
 # Setup headers with token
 HEADERS = {'Authorization': f'token {GITHUB_TOKEN}'}
 
 def get_date_range() -> tuple:
     """Get date range for PR analysis (last 30 days by default)."""
-    end_date = datetime.now(datetime.UTC)
+    end_date = datetime.now(dt.UTC)
     start_date = end_date - timedelta(days=30)
     return start_date.isoformat(), end_date.isoformat()
 

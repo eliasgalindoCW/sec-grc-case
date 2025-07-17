@@ -12,6 +12,7 @@ It handles:
 import json
 import os
 from datetime import datetime
+import datetime as dt
 from typing import Dict, List, Optional
 import logging
 from pathlib import Path
@@ -65,7 +66,7 @@ class EvidenceStore:
         Returns:
             Dictionary with file paths
         """
-        timestamp = datetime.now(datetime.UTC)
+        timestamp = datetime.now(dt.UTC)
         date_str = timestamp.strftime("%Y-%m-%d_%H-%M-%S")
         
         # Use provided status or get from metrics
@@ -136,6 +137,9 @@ class EvidenceStore:
                 
             # Check date range
             timestamp = datetime.fromisoformat(evidence['timestamp'])
+            if timestamp.tzinfo is None:
+                # If timestamp is timezone-naive, assume it's UTC
+                timestamp = timestamp.replace(tzinfo=dt.UTC)
             if start_date and timestamp < start_date:
                 continue
             if end_date and timestamp > end_date:
@@ -170,6 +174,9 @@ class EvidenceStore:
         # Get latest evidence
         latest = evidence_list[-1]
         timestamp = datetime.fromisoformat(latest['timestamp'])
+        if timestamp.tzinfo is None:
+            # If timestamp is timezone-naive, assume it's UTC
+            timestamp = timestamp.replace(tzinfo=dt.UTC)
         date_str = timestamp.strftime("%Y-%m-%d_%H-%M-%S")
         
         # Generate report
