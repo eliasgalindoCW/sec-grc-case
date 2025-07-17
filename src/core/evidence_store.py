@@ -65,7 +65,7 @@ class EvidenceStore:
         Returns:
             Dictionary with file paths
         """
-        timestamp = datetime.utcnow()
+        timestamp = datetime.now(datetime.UTC)
         date_str = timestamp.strftime("%Y-%m-%d_%H-%M-%S")
         
         # Use provided status or get from metrics

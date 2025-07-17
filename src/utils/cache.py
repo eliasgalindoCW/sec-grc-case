@@ -68,7 +68,7 @@ class Cache:
                 
             # Check TTL
             cached_time = datetime.fromisoformat(cached['timestamp'])
-            if datetime.utcnow() - cached_time > self.ttl:
+            if datetime.now(datetime.UTC) - cached_time > self.ttl:
                 logger.debug(f"Cache expired for key: {key}")
                 return None
                 
@@ -91,7 +91,7 @@ class Cache:
         
         try:
             cached = {
-                'timestamp': datetime.utcnow().isoformat(),
+                'timestamp': datetime.now(datetime.UTC).isoformat(),
                 'data': value
             }
             

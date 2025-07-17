@@ -45,7 +45,7 @@ class MCPEvidenceAnalyzer:
             Dictionary with structured context for MCP
         """
         # Calculate date range
-        end_date = datetime.utcnow()
+        end_date = datetime.now(datetime.UTC)
         start_date = end_date - timedelta(days=days)
         
         # Get evidence history
