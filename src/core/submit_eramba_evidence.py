@@ -1,6 +1,7 @@
 # submit_eramba_evidence.py
 import requests
 from datetime import datetime
+import datetime as dt
 from typing import Dict, Tuple
 from requests.exceptions import RequestException
 from src.utils.config import ERAMBA_API_URL, ERAMBA_TOKEN, ERAMBA_CONTROL_ID
@@ -66,7 +67,7 @@ def send_evidence(control_id: int, result: str, description: str) -> Tuple[int, 
         # Prepare payload
         payload = {
             'control_id': control_id,
-            'date': datetime.now(datetime.UTC).isoformat(),
+            'date': datetime.now(dt.UTC).isoformat(),
             'result': result,
             'description': description
         }

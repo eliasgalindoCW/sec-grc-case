@@ -12,6 +12,7 @@ It implements a structured approach to:
 import requests
 from typing import Dict, Optional, Union
 from datetime import datetime
+import datetime as dt
 import json
 from dataclasses import dataclass
 from enum import Enum
@@ -65,7 +66,7 @@ class ErambaEvidence:
     attachments: list = None
     
     def __post_init__(self):
-        self.timestamp = self.timestamp or datetime.now(datetime.UTC)
+        self.timestamp = self.timestamp or datetime.now(dt.UTC)
         self.attachments = self.attachments or []
 
 class ErambaClient:

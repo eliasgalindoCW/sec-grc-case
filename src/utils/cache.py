@@ -7,6 +7,7 @@ This module provides caching functionality for API results and analysis data.
 import json
 import hashlib
 from datetime import datetime, timedelta
+import datetime as dt
 from pathlib import Path
 from typing import Any, Dict, Optional
 import logging
@@ -68,7 +69,10 @@ class Cache:
                 
             # Check TTL
             cached_time = datetime.fromisoformat(cached['timestamp'])
-            if datetime.now(datetime.UTC) - cached_time > self.ttl:
+            if cached_time.tzinfo is None:
+                # If timestamp is timezone-naive, assume it's UTC
+                cached_time = cached_time.replace(tzinfo=dt.UTC)
+            if datetime.now(dt.UTC) - cached_time > self.ttl:
                 logger.debug(f"Cache expired for key: {key}")
                 return None
                 
@@ -91,7 +95,7 @@ class Cache:
         
         try:
             cached = {
-                'timestamp': datetime.now(datetime.UTC).isoformat(),
+                'timestamp': datetime.now(dt.UTC).isoformat(),
                 'data': value
             }
             

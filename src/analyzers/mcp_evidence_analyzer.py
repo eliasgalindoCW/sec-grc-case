@@ -7,6 +7,7 @@ PR review control evidence and suggesting improvements.
 
 import json
 from datetime import datetime, timedelta
+import datetime as dt
 from typing import Dict, List, Optional
 from pathlib import Path
 import logging
@@ -45,7 +46,7 @@ class MCPEvidenceAnalyzer:
             Dictionary with structured context for MCP
         """
         # Calculate date range
-        end_date = datetime.now(datetime.UTC)
+        end_date = datetime.now(dt.UTC)
         start_date = end_date - timedelta(days=days)
         
         # Get evidence history

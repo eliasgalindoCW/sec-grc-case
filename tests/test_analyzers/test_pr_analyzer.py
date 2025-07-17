@@ -56,7 +56,7 @@ def test_get_merged_prs_with_cache(mock_datetime, mock_get, mock_cache, mock_git
     analyzer.cache = mock_cache
     
     # Mock datetime.now() to return a date after our test data
-    mock_datetime.now.return_value = datetime(2025, 1, 15)
+    mock_datetime.now.return_value = datetime(2025, 1, 15, tzinfo=dt.UTC)
     mock_datetime.strptime = datetime.strptime
     mock_datetime.UTC = dt.UTC
     
@@ -82,7 +82,7 @@ def test_analyze_pr(mock_datetime, mock_get, mock_github_response, sample_pr_dat
     analyzer = PullRequestAnalyzer('token', 'owner/repo')
     
     # Mock datetime.now() to return a date after our test data
-    mock_datetime.now.return_value = datetime(2025, 1, 15)
+    mock_datetime.now.return_value = datetime(2025, 1, 15, tzinfo=dt.UTC)
     mock_datetime.strptime = datetime.strptime
     mock_datetime.UTC = dt.UTC
     
@@ -130,7 +130,7 @@ def test_analyze_compliance(mock_datetime, mock_get, mock_github_response, sampl
     analyzer.cache.set = Mock()
     
     # Mock datetime.now() to return a date after our test data
-    mock_datetime.now.return_value = datetime(2025, 1, 15)
+    mock_datetime.now.return_value = datetime(2025, 1, 15, tzinfo=dt.UTC)
     mock_datetime.strptime = datetime.strptime
     mock_datetime.UTC = dt.UTC
     
@@ -193,7 +193,7 @@ def test_non_compliant_pr(mock_datetime, mock_get, mock_github_response, sample_
     analyzer.cache.set = Mock()
     
     # Mock datetime.now() to return a date after our test data
-    mock_datetime.now.return_value = datetime(2025, 1, 15)
+    mock_datetime.now.return_value = datetime(2025, 1, 15, tzinfo=dt.UTC)
     mock_datetime.strptime = datetime.strptime
     mock_datetime.UTC = dt.UTC
     
@@ -242,7 +242,7 @@ def test_error_handling(mock_datetime, mock_get, mock_github_response):
     analyzer = PullRequestAnalyzer('token', 'owner/repo')
     
     # Mock datetime.now() to return a date after our test data
-    mock_datetime.now.return_value = datetime(2025, 1, 15)
+    mock_datetime.now.return_value = datetime(2025, 1, 15, tzinfo=dt.UTC)
     mock_datetime.strptime = datetime.strptime
     mock_datetime.UTC = dt.UTC
     

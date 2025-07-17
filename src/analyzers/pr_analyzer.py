@@ -6,6 +6,7 @@ This module analyzes GitHub Pull Request compliance with review controls.
 
 import requests
 from datetime import datetime, timedelta
+import datetime as dt
 from typing import Dict, List, Optional
 import logging
 
@@ -54,7 +55,7 @@ class PullRequestAnalyzer:
         Returns:
             Dictionary with analysis results
         """
-        logger.info(f"\nAnalyzing PRs from {(datetime.now(datetime.UTC) - timedelta(days=days)).date()} to {datetime.now(datetime.UTC).date()}")
+        logger.info(f"\nAnalyzing PRs from {(datetime.now(dt.UTC) - timedelta(days=days)).date()} to {datetime.now(dt.UTC).date()}")
         logger.info(f"Target minimum sample size: {min_sample}")
         
         # Get merged PRs
@@ -113,7 +114,7 @@ class PullRequestAnalyzer:
         # Prepare results
         results = {
             'analysis_metadata': {
-                'analysis_date': datetime.now(datetime.UTC).isoformat(),
+                'analysis_date': datetime.now(dt.UTC).isoformat(),
                 'days_analyzed': days,
                 'sample_size': total_prs
             },
@@ -180,13 +181,13 @@ class PullRequestAnalyzer:
                 break
                 
             # Filter merged PRs within time range
-            cutoff_date = datetime.now(datetime.UTC) - timedelta(days=days)
+            cutoff_date = datetime.now(dt.UTC) - timedelta(days=days)
             
             for pr in prs:
                 if not pr['merged_at']:
                     continue
                     
-                merged_at = datetime.strptime(pr['merged_at'], '%Y-%m-%dT%H:%M:%SZ')
+                merged_at = datetime.strptime(pr['merged_at'], '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=dt.UTC)
                 if merged_at < cutoff_date:
                     break
                     
@@ -282,8 +283,8 @@ class PullRequestAnalyzer:
         merge_times = []
         
         for pr in prs:
-            created_at = datetime.strptime(pr['created_at'], '%Y-%m-%dT%H:%M:%SZ')
-            merged_at = datetime.strptime(pr['merged_at'], '%Y-%m-%dT%H:%M:%SZ')
+            created_at = datetime.strptime(pr['created_at'], '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=dt.UTC)
+            merged_at = datetime.strptime(pr['merged_at'], '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=dt.UTC)
             
             # Get first review time
             reviews_url = f"https://api.github.com/repos/{self.repo}/pulls/{pr['number']}/reviews"
@@ -293,7 +294,7 @@ class PullRequestAnalyzer:
             
             if reviews:
                 first_review = min(
-                    datetime.strptime(r['submitted_at'], '%Y-%m-%dT%H:%M:%SZ')
+                    datetime.strptime(r['submitted_at'], '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=dt.UTC)
                     for r in reviews
                 )
                 review_times.append((first_review - created_at).total_seconds() / 3600)
