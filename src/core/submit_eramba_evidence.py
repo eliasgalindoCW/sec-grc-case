@@ -66,7 +66,7 @@ def send_evidence(control_id: int, result: str, description: str) -> Tuple[int, 
         # Prepare payload
         payload = {
             'control_id': control_id,
-            'date': datetime.utcnow().isoformat(),
+            'date': datetime.now(datetime.UTC).isoformat(),
             'result': result,
             'description': description
         }

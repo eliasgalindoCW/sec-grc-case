@@ -11,7 +11,7 @@ HEADERS = {'Authorization': f'token {GITHUB_TOKEN}'}
 
 def get_date_range() -> tuple:
     """Get date range for PR analysis (last 30 days by default)."""
-    end_date = datetime.utcnow()
+    end_date = datetime.now(datetime.UTC)
     start_date = end_date - timedelta(days=30)
     return start_date.isoformat(), end_date.isoformat()
 

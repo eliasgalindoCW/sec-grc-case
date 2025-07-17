@@ -5,3 +5,5 @@ __pycache__/
 analysis_output/
 evidence/
 logs/
+.pytest_cache/
+.vscode/

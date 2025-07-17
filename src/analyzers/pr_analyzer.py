@@ -54,7 +54,7 @@ class PullRequestAnalyzer:
         Returns:
             Dictionary with analysis results
         """
-        logger.info(f"\nAnalyzing PRs from {(datetime.utcnow() - timedelta(days=days)).date()} to {datetime.utcnow().date()}")
+        logger.info(f"\nAnalyzing PRs from {(datetime.now(datetime.UTC) - timedelta(days=days)).date()} to {datetime.now(datetime.UTC).date()}")
         logger.info(f"Target minimum sample size: {min_sample}")
         
         # Get merged PRs
@@ -113,7 +113,7 @@ class PullRequestAnalyzer:
         # Prepare results
         results = {
             'analysis_metadata': {
-                'analysis_date': datetime.utcnow().isoformat(),
+                'analysis_date': datetime.now(datetime.UTC).isoformat(),
                 'days_analyzed': days,
                 'sample_size': total_prs
             },
@@ -180,7 +180,7 @@ class PullRequestAnalyzer:
                 break
                 
             # Filter merged PRs within time range
-            cutoff_date = datetime.utcnow() - timedelta(days=days)
+            cutoff_date = datetime.now(datetime.UTC) - timedelta(days=days)
             
             for pr in prs:
                 if not pr['merged_at']:

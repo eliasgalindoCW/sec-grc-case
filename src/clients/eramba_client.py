@@ -65,7 +65,7 @@ class ErambaEvidence:
     attachments: list = None
     
     def __post_init__(self):
-        self.timestamp = self.timestamp or datetime.utcnow()
+        self.timestamp = self.timestamp or datetime.now(datetime.UTC)
         self.attachments = self.attachments or []
 
 class ErambaClient:
