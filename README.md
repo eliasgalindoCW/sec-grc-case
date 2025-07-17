@@ -54,6 +54,7 @@ security-grc-case/
 │       └── logging_config.py # Logging setup
 ├── tests/                   # Test suite
 │   └── test_analyzers/      # Analyzer tests
+├── eramba_pr_control.csv   # Sample control definition for Eramba
 ├── .env.example            # Example environment variables
 ├── requirements.txt        # Dependencies
 └── main.py                # Application entry point
@@ -154,6 +155,70 @@ Evidence is stored in a structured format with:
 - Include summary statistics
 - List non-compliant PRs
 - Show risk analysis
+
+## Internal Control Framework
+
+### Sample Control Definition (`eramba_pr_control.csv`)
+
+This repository includes a sample control definition file that demonstrates how PR review controls can be structured for GRC systems like Eramba. The file contains an example of a comprehensive internal control framework for GitHub Pull Request reviews.
+
+**File:** `eramba_pr_control.csv`
+
+**Control Definition:**
+- **Control Name:** PR Review Control - GitHub
+- **Control Description:** All Pull Requests must be reviewed and approved by someone other than the author before being merged. This control ensures code quality, security, and compliance with development standards.
+- **Risk Level:** Critical
+- **Compliance Criteria:** 95% compliance rate with no unapproved merged PRs
+- **Review Schedule:** Quarterly (15-01|15-04|15-07|15-10)
+- **Responsible Parties:** Group-Admin, User-admin
+
+### Control Framework Structure
+
+The CSV file follows a structured format that can be imported into Eramba or similar GRC platforms:
+
+```csv
+Control Name, Description, [Additional Fields], Risk Level, Owner, Reviewer, 
+Compliance Criteria, Review Schedule, Responsible Parties, Review Dates
+```
+
+**Key Fields:**
+- **Control Name**: Unique identifier for the control
+- **Description**: Detailed explanation of the control's purpose and scope
+- **Risk Level**: Classification (Critical, High, Medium, Low)
+- **Compliance Criteria**: Measurable success criteria (e.g., "95% compliance rate")
+- **Review Schedule**: Periodic review dates in MM-DD format
+- **Responsible Parties**: Groups or individuals responsible for control execution
+- **Evidence Requirements**: Types of evidence needed for compliance verification
+
+### Usage in GRC Systems
+
+This sample control definition can be used to:
+
+1. **Set up Controls in Eramba:**
+   - Import the CSV file directly into Eramba
+   - Configure automated evidence collection
+   - Set up review workflows
+
+2. **Establish Compliance Framework:**
+   - Define measurable compliance criteria
+   - Set review schedules and responsibilities
+   - Configure risk assessment parameters
+
+3. **Automate Evidence Collection:**
+   - Link to this tool's evidence generation
+   - Configure automated reporting
+   - Set up compliance monitoring
+
+### Future Enhancements
+
+The control framework is designed to be extensible for additional controls:
+
+- **Code Quality Controls**: Static analysis, test coverage requirements
+- **Security Controls**: Vulnerability scanning, dependency checks
+- **Deployment Controls**: Change management, rollback procedures
+- **Documentation Controls**: README updates, change logs
+
+This sample provides a foundation for implementing comprehensive software development lifecycle controls within your GRC framework.
 
 ## Cache Management
 
