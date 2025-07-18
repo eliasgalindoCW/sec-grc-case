@@ -2,6 +2,8 @@
 
 This tool analyzes GitHub Pull Request review controls and provides compliance evidence and insights using LLMs. It's designed to help security and compliance teams automate the verification of PR review controls and maintain evidence for audits.
 
+**✨ Features automated setup and local Eramba deployment via comprehensive Justfile with 25+ commands.**
+
 ## Features
 
 ### PR Review Control Verification
@@ -27,6 +29,14 @@ This tool analyzes GitHub Pull Request review controls and provides compliance e
 - Pattern recognition
 - Actionable insights
 - MCP (Model Context Protocol) integration
+
+### Automation & Integration
+- **Comprehensive Justfile** with 25+ commands
+- **Local Eramba deployment** using official Docker repository
+- **One-command setup** for complete development environment
+- **Automated evidence collection** and GRC integration
+- **Container lifecycle management** (start/stop/backup/restore)
+- **Development workflow automation** with pipeline commands
 
 ## Project Structure
 
@@ -54,6 +64,11 @@ security-grc-case/
 │       └── logging_config.py # Logging setup
 ├── tests/                   # Test suite
 │   └── test_analyzers/      # Analyzer tests
+├── eramba-docker/           # Eramba Docker repository (auto-created)
+│   ├── .env                 # Auto-generated Eramba configuration
+│   ├── docker-compose.simple-install.yml
+│   └── ...                  # Additional Eramba files
+├── justfile                 # Automation commands (25+ commands)
 ├── eramba_pr_control.csv   # Sample control definition for Eramba
 ├── .env.example            # Example environment variables
 ├── requirements.txt        # Dependencies
@@ -61,6 +76,37 @@ security-grc-case/
 ```
 
 ## Setup
+
+### Option 1: Automated Setup (Recommended)
+
+1. Install Just command runner:
+```bash
+# macOS
+brew install just
+
+# Ubuntu/Debian
+curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash -s -- --to /usr/local/bin
+
+# Windows (using Scoop)
+scoop install just
+```
+
+2. Install Docker and Docker Compose:
+   - [Docker Installation Guide](https://docs.docker.com/get-docker/)
+   - [Docker Compose Installation Guide](https://docs.docker.com/compose/install/)
+
+3. Run automated setup:
+```bash
+just dev-setup
+```
+
+This command will:
+- Install Python dependencies
+- Clone and configure Eramba Docker repository
+- Create necessary configuration files
+- Set up the development environment
+
+### Option 2: Manual Setup
 
 1. Install dependencies:
 ```bash
@@ -93,7 +139,138 @@ LOG_LEVEL=INFO  # DEBUG, INFO, WARNING, ERROR
 ANTHROPIC_API_KEY=your_anthropic_key_here
 ```
 
-## Usage
+## Automation with Justfile
+
+For streamlined development and deployment, this project includes a comprehensive Justfile that automates all tasks including local Eramba setup. The Justfile provides 25+ commands to manage both the project and a local Eramba instance.
+
+### Prerequisites
+
+- [Just](https://github.com/casey/just) - Command runner
+- [Docker](https://docs.docker.com/get-docker/) - Container platform
+- [Docker Compose](https://docs.docker.com/compose/install/) - Container orchestration
+
+### Quick Start
+
+```bash
+# Setup complete development environment (Python + Eramba)
+just dev-setup
+
+# Start local Eramba server
+just start-eramba
+
+# Access Eramba at https://localhost:8443
+# Default credentials: admin / admin123
+```
+
+### Available Commands
+
+View all available commands:
+```bash
+just
+# or
+just --list
+```
+
+### Eramba Management (10 commands)
+
+```bash
+# Eramba setup and management
+just clone-eramba      # Clone official Eramba Docker repository
+just setup-eramba      # Configure Eramba environment (.env creation)
+just start-eramba      # Start Eramba server (port 8443)
+just stop-eramba       # Stop Eramba server
+just restart-eramba    # Restart Eramba server
+just status-eramba     # Check container status
+just logs-eramba       # View Eramba logs (follow mode)
+just shell-eramba      # Access Eramba container shell
+just clean-eramba      # Remove Eramba completely (containers, volumes)
+just backup-eramba     # Backup Eramba data and configuration
+```
+
+### Project Commands (6 commands)
+
+```bash
+# Project analysis and management
+just install           # Install Python dependencies
+just analyze           # Run PR analysis with LLM
+just check             # Execute control checks
+just submit            # Submit evidence
+just report            # Generate reports
+just test              # Run test suite
+```
+
+### Development Commands (5 commands)
+
+```bash
+# Development utilities
+just dev-setup         # Complete environment setup
+just clean             # Clean cache and temporary files
+just info              # Show environment information
+just pipeline          # Run complete project pipeline
+just full-pipeline     # Run pipeline with Eramba integration
+```
+
+### Eramba Integration
+
+The Justfile automatically:
+- Clones the official [Eramba Docker repository](https://github.com/eramba/docker)
+- Creates secure default configurations for development
+- Manages container lifecycle (start/stop/restart)
+- Provides backup and restore functionality
+- Integrates with the project's GRC analysis pipeline
+
+### Configuration
+
+The system automatically creates a `.env` file in the `eramba-docker/` directory with secure defaults:
+
+```env
+# Database
+MYSQL_ROOT_PASSWORD=rootpassword
+MYSQL_DATABASE=eramba
+MYSQL_USER=eramba
+MYSQL_PASSWORD=eramba123
+
+# Server
+APACHE_PORT=8443
+
+# Eramba
+ERAMBA_ADMIN_EMAIL=admin
+ERAMBA_ADMIN_PASSWORD=admin123
+ERAMBA_TIMEZONE=America/Sao_Paulo
+```
+
+⚠️ **Note**: These are development defaults. Change credentials for production use.
+
+### Typical Workflow
+
+```bash
+# Daily development workflow
+just start-eramba      # Start Eramba server
+just analyze           # Run your analysis
+just logs-eramba       # Check logs if needed
+just stop-eramba       # Stop when done
+
+# Complete pipeline
+just full-pipeline     # Runs dev-setup + start-eramba + analysis pipeline
+```
+
+### File Structure After Setup
+
+```
+security-grc-case/
+├── justfile           # Automation commands
+├── eramba-docker/     # Eramba Docker repository (auto-created)
+│   ├── .env          # Auto-generated configuration
+│   ├── docker-compose.simple-install.yml
+│   └── ...
+├── src/
+├── logs/
+└── ...
+```
+
+## Manual Usage
+
+If you prefer manual execution without Justfile:
 
 Run specific actions:
 ```bash
@@ -242,10 +419,60 @@ Tests cover:
 - LLM integration
 - Cache functionality
 
+## Troubleshooting
+
+### Justfile Issues
+
+**Error: "just command not found"**
+```bash
+# Install Just command runner
+brew install just  # macOS
+# or follow installation instructions in Setup section
+```
+
+**Error: "docker-compose not found"**
+```bash
+# Install Docker Compose
+pip install docker-compose
+```
+
+**Error: "Port 8443 already in use"**
+```bash
+# Check what's using port 8443
+lsof -i :8443
+
+# Or change port in eramba-docker/.env
+echo "APACHE_PORT=8081" >> eramba-docker/.env
+```
+
+**Error: "Container won't start"**
+```bash
+# Check logs
+just logs-eramba
+
+# Clean and restart
+just clean-eramba
+just start-eramba
+```
+
+### Environment Information
+
+Check your environment setup:
+```bash
+just info
+```
+
+This will show:
+- Python version
+- Docker version
+- Docker Compose version
+- Current directory
+- Eramba status
+
 ## Contributing
 
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Run tests
+4. Run tests: `just test` or `pytest tests/`
 5. Submit a pull request

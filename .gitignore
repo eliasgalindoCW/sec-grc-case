@@ -7,3 +7,9 @@ evidence/
 logs/
 .pytest_cache/
 .vscode/
+
+# Eramba Docker (cloned repository)
+eramba-docker/
+
+# Backup files
+eramba-backup-*/
